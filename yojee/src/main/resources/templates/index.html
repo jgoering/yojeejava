@@ -12,6 +12,10 @@
 <body>
 
 <h2 th:text="${algorithm} + ' (' + ${time} + 'ms)'">Algorithm</h2>
+<p>
+<a href="/">NearestNeighbor</a>
+<a href="/?algorithm=NearestCourier">NearestCourier</a>
+</p>
 
 <dl id="legend">
     <dt th:text="'Distance ('+ ${#numbers.formatDecimal(totalDistance, 0, 3)} + 'km)'">Distance</dt>

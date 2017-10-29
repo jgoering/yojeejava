@@ -1,5 +1,7 @@
 package com.yojee.data;
 
+import java.util.List;
+
 public class Location {
     private final double latitude;
     private final double longitude;
@@ -49,6 +51,20 @@ public class Location {
 
     private static double haversin(double val) {
         return Math.pow(Math.sin(val / 2), 2);
+    }
+
+    /* finds nearest neighbor from a list of locations */
+    public Location findNearestNeighbor(List<Location> locations) {
+        Location result = null;
+        double shortestDistance = Double.MAX_VALUE;
+        for (Location location: locations) {
+            double distance = location.getDistance(this);
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                result = location;
+            }
+        }
+        return result;
     }
 
     @Override

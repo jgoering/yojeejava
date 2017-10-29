@@ -1,10 +1,15 @@
 package com.yojee.data;
 
+import com.yojee.pathfinder.NearestNeighborPathfinder;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LocationTest {
+
     @Test
     void distanceWithSame() {
         Location start = new Location(0,0);
@@ -28,5 +33,15 @@ class LocationTest {
     @Test
     void distanceToNull() {
         assertEquals(Double.MAX_VALUE, new Location(0,0).getDistance(null));
+    }
+
+    @Test
+    void findNearestNeighborTest(){
+        List<Location> locations = new ArrayList<>();
+        Location near = new Location(5, 5);
+        Location far = new Location(10, 10);
+        locations.add(near);
+        locations.add(far);
+        assertEquals(near, new Location(0,0).findNearestNeighbor(locations));
     }
 }

@@ -5,8 +5,8 @@ import com.yojee.data.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-/* iterates over couriers, picks the next closest location */
-public class NearestNeighborPathfinder implements IPathfinder {
+/* iterates over locations, picks the next closest courier */
+public class NearestCourierPathfinder implements IPathfinder {
     @Override
     public List<Path> findPaths(List<Location> locations, Location distributionPoint, int nofCouriers) {
         if (nofCouriers < 1) {
@@ -22,16 +22,17 @@ public class NearestNeighborPathfinder implements IPathfinder {
         }
         if (locations != null) {
             List<Location> todo = new ArrayList<>(locations);
-            int currentCourier = 0;
-            while (todo.size() > 0) {
-                Path currentPath = result.get(currentCourier);
-                Location next = currentPath.getLastLocation().findNearestNeighbor(todo);
-                if (!todo.remove(next)) {
-                    throw new IllegalStateException("findNearestNeighbor returned an element that is not part of the list of locations");
+            for (Location location : todo) {
+                double shortestDistance = Double.MAX_VALUE;
+                int nearestCourier = -1;
+                for (int i = 0; i < nofCouriers; i++) {
+                    double distance = result.get(i).getLastLocation().getDistance(location);
+                    if (distance < shortestDistance) {
+                        shortestDistance = distance;
+                        nearestCourier = i;
+                    }
                 }
-                currentPath.addLocation(next);
-                currentCourier++;
-                currentCourier %= nofCouriers;
+                result.get(nearestCourier).addLocation(location);
             }
         }
         return result;

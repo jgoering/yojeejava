@@ -2,10 +2,13 @@ package com.yojee;
 
 import com.yojee.data.Location;
 import com.yojee.data.LocationDataSource;
+import com.yojee.pathfinder.IPathfinder;
+import com.yojee.pathfinder.NearestCourierPathfinder;
 import com.yojee.pathfinder.NearestNeighborPathfinder;
 import com.yojee.pathfinder.Path;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.Map;
 public class YojeeController {
 
     @RequestMapping("/")
-    public String home(Map<String, Object> model) {
+    public String home(@RequestParam(required = false) String algorithm, Map<String, Object> model) {
         int width = 1080;
         int height = 500;
         int nofCouriers = 16;
@@ -37,10 +40,17 @@ public class YojeeController {
         model.put("miny", miny);
         model.put("factorx", factorx);
         model.put("factory", factory);
-        model.put("algorithm", "NearestNeighbor");
+
+        IPathfinder pathfinder;
+        if ("NearestCourier".equals(algorithm)) {
+            pathfinder = new NearestCourierPathfinder();
+        } else {
+            pathfinder = new NearestNeighborPathfinder();
+        }
+        model.put("algorithm", pathfinder.getClass().getSimpleName());
 
         long start = System.currentTimeMillis();
-        List<Path> paths = new NearestNeighborPathfinder().findPaths(locations, distributionPoint, nofCouriers);
+        List<Path> paths = pathfinder.findPaths(locations, distributionPoint, nofCouriers);
         model.put("time", System.currentTimeMillis()-start);
         double total = 0;
         for (Path path : paths) {
