@@ -1,0 +1,32 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Yojee</title>
+    <meta charset="utf-8" />
+    <link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+
+<h2 th:text="${algorithm} + ' (' + ${time} + 'ms)'">Algorithm</h2>
+
+<dl id="legend">
+    <dt th:text="'Distance ('+ ${#numbers.formatDecimal(totalDistance, 0, 3)} + 'km)'">Distance</dt>
+    <dd th:each="path : ${paths}" th:text="${#numbers.formatDecimal(path.getDistance(), 0, 3)} + 'km'">0</dd>
+    <dt>Hops</dt>
+    <dd th:each="path : ${paths}" th:text="${path.getLocations().size()}">0</dd>
+</dl>
+
+<svg id="svgelem" width="800" height="600" th:attr="width=${width},height=${height}" xmlns="http://www.w3.org/2000/svg">
+    <circle class="distributionPoint" cx="50" cy="50" th:attr="cx=${(distributionPoint.getLongitude()-minx)*factorx}, cy=${(distributionPoint.getLatitude()-miny)*factory}"/>
+    <circle class="point" cx="50" cy="50" th:each="location : ${locations}" th:attr="cx=${(location.getLongitude()-minx)*factorx}, cy=${(location.getLatitude()-miny)*factory}"/>
+    <polyline class="path" th:each="line : ${lines}" th:attr="points=${line}"
+            points="0,40 40,40" />
+
+</svg>
+
+</body>
+</html>

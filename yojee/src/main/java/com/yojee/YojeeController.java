@@ -1,0 +1,71 @@
+package com.yojee;
+
+import com.yojee.data.Location;
+import com.yojee.data.LocationDataSource;
+import com.yojee.pathfinder.NearestNeighborPathfinder;
+import com.yojee.pathfinder.Path;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+public class YojeeController {
+
+    @RequestMapping("/")
+    public String home(Map<String, Object> model) {
+        int width = 1080;
+        int height = 500;
+        int nofCouriers = 16;
+
+        Location minValues = LocationDataSource.getMinValues();
+        Location maxValues = LocationDataSource.getMaxValues();
+        List<Location> locations = LocationDataSource.getLocations();
+        Location distributionPoint = LocationDataSource.getDistributionPoint();
+        double minx = minValues.getLongitude();
+        double miny = minValues.getLatitude();
+        double factorx = width / (maxValues.getLongitude() - minx);
+        double factory = height / (maxValues.getLatitude() - miny);
+
+        model.put("locations", locations);
+        model.put("distributionPoint", distributionPoint);
+        model.put("width", width);
+        model.put("height", height);
+        model.put("minx", minx);
+        model.put("miny", miny);
+        model.put("factorx", factorx);
+        model.put("factory", factory);
+        model.put("algorithm", "NearestNeighbor");
+
+        long start = System.currentTimeMillis();
+        List<Path> paths = new NearestNeighborPathfinder().findPaths(locations, distributionPoint, nofCouriers);
+        model.put("time", System.currentTimeMillis()-start);
+        double total = 0;
+        for (Path path : paths) {
+            total += path.getDistance();
+        }
+        model.put("totalDistance", total);
+        model.put("paths", paths);
+        List<String> lines = convertToLines(paths, minx, miny, factorx, factory);
+        model.put("lines", lines);
+
+        return "index";
+    }
+
+    /** converts a list of paths to a string representing the points for a line suitable for an SVG polyline element. */
+    static List<String> convertToLines(List<Path> paths, double minx, double miny, double factorx, double factory) {
+        List<String> result = new ArrayList<>();
+        for (Path path : paths) {
+            StringBuilder sb = new StringBuilder();
+            for (Location location : path.getLocations()) {
+                sb.append((int) ((location.getLongitude() - minx) * factorx)).append(",").append((int) ((location.getLatitude() - miny) * factory)).append(" ");
+            }
+            sb.delete(sb.length()-1, sb.length());
+            result.add(sb.toString());
+        }
+        return result;
+    }
+
+}

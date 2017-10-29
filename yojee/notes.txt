@@ -1,0 +1,4 @@
+* ignoring locations that are too far away - we won't send motorcycle couriers from Phnom Penh to Los Angeles
+* using direct line between locations for distance calculation. should use a route based distance e.g. obtained from Google Maps Distance Matrix API or Open Street Map
+* Since we are looking at short distances, there might be faster algorithms than haversine to calculate distance
+* Should use proper map projection for display
