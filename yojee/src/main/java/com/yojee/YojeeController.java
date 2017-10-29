@@ -2,10 +2,7 @@ package com.yojee;
 
 import com.yojee.data.Location;
 import com.yojee.data.LocationDataSource;
-import com.yojee.pathfinder.IPathfinder;
-import com.yojee.pathfinder.NearestCourierPathfinder;
-import com.yojee.pathfinder.NearestNeighborPathfinder;
-import com.yojee.pathfinder.Path;
+import com.yojee.pathfinder.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +20,7 @@ public class YojeeController {
         int height = 500;
         int nofCouriers = 16;
 
+        //store some data in our model
         Location minValues = LocationDataSource.getMinValues();
         Location maxValues = LocationDataSource.getMaxValues();
         List<Location> locations = LocationDataSource.getLocations();
@@ -41,17 +39,23 @@ public class YojeeController {
         model.put("factorx", factorx);
         model.put("factory", factory);
 
+        //pick the right algorithm
         IPathfinder pathfinder;
         if ("NearestCourier".equals(algorithm)) {
             pathfinder = new NearestCourierPathfinder();
+        } else if ("NearestCourierSorted".equals(algorithm)) {
+            pathfinder = new NearestCourierSortedPathfinder();
         } else {
             pathfinder = new NearestNeighborPathfinder();
         }
         model.put("algorithm", pathfinder.getClass().getSimpleName());
 
+        //run the pathfinder
         long start = System.currentTimeMillis();
         List<Path> paths = pathfinder.findPaths(locations, distributionPoint, nofCouriers);
         model.put("time", System.currentTimeMillis()-start);
+
+        //store results
         double total = 0;
         for (Path path : paths) {
             total += path.getDistance();
