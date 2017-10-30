@@ -3,14 +3,13 @@ package com.yojee.pathfinder;
 import com.yojee.data.Location;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Path {
     private List<Location> locations = new ArrayList<>();
 
     public List<Location> getLocations() {
-        return Collections.unmodifiableList(locations);
+        return locations;
     }
 
     public void addLocation(Location location) {
@@ -34,5 +33,13 @@ public class Path {
             lastLocation = location;
         }
         return distance;
+    }
+
+    @Override
+    public String toString() {
+        return "Path{" +
+                "hops=" + locations.size() +
+                "locations=" + locations +
+                '}';
     }
 }

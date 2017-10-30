@@ -45,10 +45,13 @@ public class YojeeController {
             pathfinder = new NearestCourierPathfinder();
         } else if ("NearestCourierSorted".equals(algorithm)) {
             pathfinder = new NearestCourierSortedPathfinder();
+        } else if ("NearestCourierSortedBalanced".equals(algorithm)) {
+            pathfinder = new NearestCourierSortedPathfinder(true);
         } else {
+            algorithm = "NeirestNeighbor";
             pathfinder = new NearestNeighborPathfinder();
         }
-        model.put("algorithm", pathfinder.getClass().getSimpleName());
+        model.put("algorithm", algorithm);
 
         //run the pathfinder
         long start = System.currentTimeMillis();

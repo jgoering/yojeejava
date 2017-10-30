@@ -107,4 +107,110 @@ class NearestCourierSortedPathfinderTest {
         assertEquals(NEW_YORK, paths.get(0).getLocations().get(2));
         assertEquals(DISTRIBUTION_POINT, paths.get(1).getLocations().get(0));
     }
+
+    @Test
+    void findUnusedCouriersNull() {
+        assertNull(NearestCourierSortedPathfinder.findUnusedCouriers(null));
+    }
+
+    @Test
+    void findUnusedCouriersEmpty() {
+        List<Path> paths = new ArrayList<>();
+        assertNull(NearestCourierSortedPathfinder.findUnusedCouriers(paths));
+    }
+
+    @Test
+    void findUnusedCouriersNoUnused() {
+        List<Path> paths = new ArrayList<>();
+        Path path = new Path();
+        path.addLocation(new Location(0,0));
+        path.addLocation(new Location(1,1));
+        paths.add(path);
+        assertNull(NearestCourierSortedPathfinder.findUnusedCouriers(paths));
+    }
+
+    @Test
+    void findUnusedCouriers() {
+        List<Path> paths = new ArrayList<>();
+        Path path = new Path();
+        path.addLocation(new Location(0,0));
+        path.addLocation(new Location(1,1));
+        paths.add(path);
+        path = new Path();
+        path.addLocation(new Location(0,0));
+        paths.add(path);
+        assertEquals(path, NearestCourierSortedPathfinder.findUnusedCouriers(paths));
+    }
+
+    @Test
+    void findLargestPathNull() {
+        assertEquals(null, NearestCourierSortedPathfinder.findLargestPath(null));
+    }
+    @Test
+    void findLargestPathEmpty() {
+        List<Path> paths = new ArrayList<>();
+        assertEquals(null, NearestCourierSortedPathfinder.findLargestPath(paths));
+    }
+    @Test
+    void findLargestPath() {
+        List<Path> paths = new ArrayList<>();
+        Path path = new Path();
+        path.addLocation(new Location(0,0));
+        paths.add(path);
+        path = new Path();
+        path.addLocation(new Location(0,0));
+        path.addLocation(new Location(1,1));
+        paths.add(path);
+        assertEquals(path, NearestCourierSortedPathfinder.findLargestPath(paths));
+    }
+    @Test
+    void splitPath(){
+        Path largest = new Path();
+        Location origin = new Location(0, 0);
+        largest.addLocation(origin);
+        Location toStay = new Location(1, 1);
+        largest.addLocation(toStay);
+        Location toMove = new Location(2,2);
+        largest.addLocation(toMove);
+        Path empty = new Path();
+        empty.addLocation(origin);
+        NearestCourierSortedPathfinder.splitpath(largest, empty, 2);
+        assertEquals(2, largest.getLocations().size());
+        assertEquals(2, empty.getLocations().size());
+        assertEquals(origin, largest.getLocations().get(0));
+        assertEquals(origin, empty.getLocations().get(0));
+        assertEquals(toStay, largest.getLocations().get(1));
+        assertEquals(toMove, empty.getLocations().get(1));
+    }
+
+    @Test
+    void balance(){
+        Path largest = new Path();
+        Location origin = new Location(0, 0);
+        largest.addLocation(origin);
+        Location toStay = new Location(1, 1);
+        largest.addLocation(toStay);
+        Location toMove = new Location(2,2);
+        largest.addLocation(toMove);
+        Path empty = new Path();
+        empty.addLocation(origin);
+        List<Path> paths = new ArrayList<>();
+        paths.add(largest);
+        paths.add(empty);
+        Path dummy = new Path();
+        dummy.addLocation(origin);
+        dummy.addLocation(toStay);
+        paths.add(dummy);
+        NearestCourierSortedPathfinder.balance(paths);
+        assertEquals(3, paths.size());
+        assertEquals(largest, paths.get(0));
+        assertEquals(empty, paths.get(1));
+        assertEquals(dummy, paths.get(2));
+        assertEquals(2, largest.getLocations().size());
+        assertEquals(2, empty.getLocations().size());
+        assertEquals(origin, largest.getLocations().get(0));
+        assertEquals(origin, empty.getLocations().get(0));
+        assertEquals(toStay, largest.getLocations().get(1));
+        assertEquals(toMove, empty.getLocations().get(1));
+    }
 }
